@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">CamPack</string>
+    <string name="save_to_gallery">Save to Gallery</string>
+    <string name="base64_data_title">BASE64 DATA</string>
+    <string name="copy_to_clipboard">Copy to Clipboard</string>
+    <string name="back">Back</string>
+    <string name="error_path_not_found">Error: Image path not found.</string>
+    <string name="error_file_not_exist">Error: File does not exist.</string>
+    <string name="error_loading_base64">Error: %1$s</string>
+    <string name="preparing_base64">Preparing full Base64 to clipboard...</string>
+    <string name="full_base64_copied">Full Base64 copied!</string>
+    <string name="copy_failed">Copy failed: %1$s</string>
+    <string name="displaying_preview">Displaying preview (10k chars)</string>
+    <string name="truncated_info">\n\n... [TRUNCATED for performance - Use \'Copy\' for full data]</string>
+</resources>
