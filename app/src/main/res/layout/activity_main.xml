@@ -34,7 +34,7 @@
             android:letterSpacing="0.3"
             android:layout_marginBottom="32dp"/>
 
-        <!-- Location Card -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/location_card"
             android:layout_width="match_parent"
@@ -88,7 +88,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Camera Permission Card -->
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,7 +145,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Options Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -181,7 +180,7 @@
                     android:buttonTint="#E8FF47"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- Quality -->
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -227,7 +226,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Image Preview Card -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/image_card"
             android:layout_width="match_parent"
