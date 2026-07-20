@@ -1,4 +1,4 @@
-package com.example.campack
+package com.example.campackv20
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -10,8 +10,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.campack.R
-import com.example.campack.databinding.ActivityBase64Binding
+import com.example.campackv20.R
+import com.example.campackv20.databinding.ActivityBase64Binding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

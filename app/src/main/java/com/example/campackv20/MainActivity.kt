@@ -1,8 +1,6 @@
-package com.example.campack
+package com.example.campackv20
 
 import android.Manifest
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,17 +13,18 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.View
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.campack.databinding.ActivityMainBinding
+import com.example.campackv20.databinding.ActivityMainBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.yalantis.ucrop.UCrop
+import com.signzy.imageanalysis.SignzyImageAnalysis
+import com.signzy.imagequality.model.SignzyAnalysisResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -111,6 +110,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.requestBtn.setOnClickListener { requestCameraPermission() }
         binding.captureBtn.setOnClickListener { openCamera() }
+        binding.retakeBtn.setOnClickListener { openCamera() }
         binding.showBase64Btn.setOnClickListener { copyBase64ToClipboard() }
         binding.saveGalleryBtn.setOnClickListener { saveToGallery() }
     }
@@ -283,8 +283,16 @@ class MainActivity : AppCompatActivity() {
                     binding.imageView.setImageBitmap(finalBitmap)
                     binding.imageCard.visibility = View.VISIBLE
                     
+                    // Clear previous analysis results UI
+                    binding.blurScoreText.visibility = View.GONE
+                    binding.retakeBtn.visibility = View.GONE
+                    
                     val sizeKb = compressedBytes.size / 1024
                     binding.imageInfoText.text = "Size: ${sizeKb}KB | Quality: $quality%"
+                    
+                    // Run Signzy Image Analysis
+                    analyzeImageQuality(finalBitmap)
+
                     Toast.makeText(this@MainActivity, "Image ready", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
@@ -344,6 +352,56 @@ class MainActivity : AppCompatActivity() {
         R.id.q90 -> 90
         R.id.q80 -> 80
         else -> 100
+    }
+
+    // ─── Signzy Image Analysis ──────────────────────────────────────────────
+
+    private fun analyzeImageQuality(bitmap: Bitmap) {
+        lifecycleScope.launch(Dispatchers.Default) {
+            try {
+                val signzyImageAnalysis = SignzyImageAnalysis(applicationContext)
+                // Using "Document" as default docType, can be changed to "Face" if needed
+                val result: SignzyAnalysisResult = signzyImageAnalysis.runImageQualityAnalysis(bitmap, "Document")
+
+                withContext(Dispatchers.Main) {
+                    displayAnalysisResult(result)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    binding.blurScoreText.visibility = View.VISIBLE
+                    binding.blurScoreText.text = "Analysis Error: ${e.message}"
+                    binding.blurScoreText.setTextColor(ContextCompat.getColor(this@MainActivity, android.R.color.holo_red_dark))
+                    binding.retakeBtn.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun displayAnalysisResult(result: SignzyAnalysisResult) {
+        binding.blurScoreText.visibility = View.VISIBLE
+        
+        if (result.error != null) {
+            binding.blurScoreText.text = "Error ${result.error}: ${result.errorMessage}"
+            binding.blurScoreText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
+            binding.retakeBtn.visibility = View.VISIBLE
+            return
+        }
+
+        val clearScore = result.clearScore ?: 0f
+        val blurScore = result.blurScore ?: 0f
+        
+        val displayText = "Clarity: ${"%.2f".format(clearScore)} | Blur: ${"%.2f".format(blurScore)}"
+        binding.blurScoreText.text = displayText
+
+        // Simple logic: If clarity is low, show in red and suggest retake
+        if (clearScore < 0.5f) {
+            binding.blurScoreText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
+            binding.retakeBtn.visibility = View.VISIBLE
+            Toast.makeText(this, "Image is blurry. Please retake.", Toast.LENGTH_LONG).show()
+        } else {
+            binding.blurScoreText.setTextColor(0xFFE8FF47.toInt()) // Neon Green
+            binding.retakeBtn.visibility = View.GONE
+        }
     }
 
     // ─── Base64 ──────────────────────────────────────────────────────────────

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.campack"
+    namespace = "com.example.campackv20"
     compileSdk = 35
 
     defaultConfig {
@@ -32,15 +32,23 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        mlModelBinding = true
     }
 }
 
 dependencies {
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.activity)
+
+    // TensorFlow Lite
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.tensorflow.lite.metadata)
+    implementation(libs.androidx.exifinterface)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
